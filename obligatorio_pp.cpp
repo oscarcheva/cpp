@@ -2,68 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 
-int main()
-{
-
-    const int MAX_MONTO = 1000;
-    const int MIN_APUESTA = 50;
-    int saldo = 0;
-    int apuesta = 0;
-    int seleccion = 0;
-    char copa1;
-    char copa2;
-    char copa3;
-    bool acierto = false;
-    bool seguirJugando = true;
-
-    printf("Bienvenido/a, a continuación comenzaremos a jugar \n. Para cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola. Recuerda que también puedes optar por retirarte indicándolo con un '4' \n. Ahora dime, cuanto dinero tienes disponible? \n");
-
-    scanf("%d", &saldo);
-    if (saldo < MIN_APUESTA || MAX_MONTO > 1000)
-        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000");
-    else
-    {
-        printf("O O O \n 1 2 3 \n Copa?: ");
-        scanf("%d", &seleccion);
-
-        printf("\n Apuesta?: ");
-        scanf("%d", &apuesta);
-
-        if (apuesta < MIN_APUESTA || apuesta > saldo)
-            printf("La apuesta debe estar comprendida entre %d y %d", MIN_APUESTA, saldo);
-        else
-        {
-            while (seguirJugando)
-            {
-                jugar(copa1, copa2, copa3);
-                switch (seleccion)
-                {
-                case 1:
-                    acierto = verificarResultado(copa1);
-                    break;
-                case 2:
-                    acierto = verificarResultado(copa2);
-                    break;
-                case 3:
-                    acierto = verificarResultado(copa3);
-                    break;
-                }
-            }
-            if (acierto)
-                printf("\n Ha acertado ");
-            else
-                printf("\n No ha acertado ");
-            
-            printf("\n %c %c %c \n Saldo: %d ",copa1,copa2,copa3,saldo);
-            
-
-
-        }
-    }
-    return 0;
-}
-
-void jugar(char copa1, char copa2, char copa3)
+void jugar(char &copa1, char &copa2, char &copa3)
 {
     srand(time(NULL));
 
@@ -92,11 +31,12 @@ void jugar(char copa1, char copa2, char copa3)
     }
 }
 
-int modificarSaldo(int saldo, int apuesta, bool gano)
+void modificarSaldo(int &saldo, int &apuesta, bool gano)
 {
     if (gano)
-        return saldo += apuesta;
-    return saldo -= apuesta
+        saldo += apuesta;
+    else
+        saldo -= apuesta;
 }
 
 bool verificarResultado(char copa)
@@ -105,4 +45,104 @@ bool verificarResultado(char copa)
         return true;
 
     return false;
+}
+
+bool estafar(char copa)
+{
+    if (copa == '.')
+        return true;
+
+    return false;
+}
+
+int main()
+{
+
+    const int MAX_MONTO = 1000;
+    const int MIN_APUESTA = 50;
+    int saldo = 0;
+    int apuesta = 0;
+    int seleccion = 0;
+    char copa1;
+    char copa2;
+    char copa3;
+    bool acierto = false;
+    bool seguirJugando = true;
+    int ganadas = 0;
+
+    printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. \nAhora dime, cuanto dinero tienes disponible? \n");
+
+    scanf("%d", &saldo);
+
+    if (saldo < MIN_APUESTA || MAX_MONTO > 1000)
+        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000");
+    else
+    {
+        printf("O O O \n");
+        printf("1 2 3 \n");
+        printf("Copa?: ");
+
+        scanf("%d", &seleccion);
+
+        while (seleccion != 4)
+        {
+
+            printf("Apuesta?: ");
+            scanf("%d", &apuesta);
+
+            if (apuesta < MIN_APUESTA)
+                printf("Para jugar hay que pagar amigo \n");
+
+            else if (apuesta > saldo)
+                printf("No puedes apostar mas de tu saldo \n");
+
+            else
+            {
+                if (ganadas == 2)
+                    acierto = false;
+                else
+                {
+                    jugar(copa1, copa2, copa3);
+
+                    switch (seleccion)
+                    {
+                    case 1:
+                        acierto = verificarResultado(copa1);
+                        break;
+                    case 2:
+                        acierto = verificarResultado(copa2);
+                        break;
+                    case 3:
+                        acierto = verificarResultado(copa3);
+                        break;
+                    }
+                }
+
+                printf("\n %c %c %c",copa1, copa2, copa3);
+
+                if (acierto)
+                {
+                    printf("\nHa acertado ");
+                    ganadas++;
+                }
+                else
+                {
+                    printf("\nNo ha acertado ");
+                    ganadas = 0;
+                }
+
+                modificarSaldo(saldo, apuesta, acierto);
+
+                printf("Saldo: %d", saldo);
+
+                printf("\n");
+
+                printf("O O O \n");
+                printf("1 2 3 \n");
+                printf("Copa?: \n");
+                scanf("%d", &seleccion);
+            }
+        }
+        printf("Nos vemos a la proxima");
+    }
 }
