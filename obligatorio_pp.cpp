@@ -4,31 +4,9 @@
 
 void jugar(char &copa1, char &copa2, char &copa3)
 {
-    srand(time(NULL));
+    int valorAleatorio = rand() % 3 + 1;
 
-    int valorAleatorio = rand() % 2;
-
-    if (valorAleatorio == 0)
-    {
-        copa1 = '0';
-        valorAleatorio = rand() % 2;
-        if (valorAleatorio == 0)
-        {
-            copa2 = '0';
-            copa3 = '.';
-        }
-        else
-        {
-            copa2 = '.';
-            copa3 = '0';
-        }
-    }
-    else
-    {
-        copa1 = '.';
-        copa2 = '0';
-        copa3 = '0';
-    }
+    generarCopas(copa1, copa2, copa3, valorAleatorio);
 }
 
 void modificarSaldo(int &saldo, int &apuesta, bool gano)
@@ -47,12 +25,36 @@ bool verificarResultado(char copa)
     return false;
 }
 
-bool estafar(char copa)
+bool estafar(char &copa1, char &copa2, char &copa3, int seleccion)
 {
-    if (copa == '.')
-        return true;
 
-    return false;
+    if (seleccion == 3)
+        seleccion = 1;
+    else
+        seleccion += 1;
+    generarCopas(copa1, copa2, copa3, seleccion);
+}
+
+void generarCopas(char &copa1, char &copa2, char &copa3, int valor)
+{
+    if (valor == 1)
+    {
+        copa1 = '.';
+        copa2 = '0';
+        copa3 = '0';
+    }
+    else if (valor == 2)
+    {
+        copa1 = '0';
+        copa2 = '.';
+        copa3 = '0';
+    }
+    else
+    {
+        copa1 = '0';
+        copa2 = '0';
+        copa3 = '.';
+    }
 }
 
 int main()
@@ -67,7 +69,6 @@ int main()
     char copa2;
     char copa3;
     bool acierto = false;
-    bool seguirJugando = true;
     int ganadas = 0;
 
     printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. \nAhora dime, cuanto dinero tienes disponible? \n");
@@ -90,16 +91,21 @@ int main()
             printf("Apuesta?: ");
             scanf("%d", &apuesta);
 
-            if (apuesta < MIN_APUESTA)
+            while(apuesta< MIN_APUESTA && apuesta>saldo)
+
+{            if (apuesta < MIN_APUESTA)
                 printf("Para jugar hay que pagar amigo \n");
 
             else if (apuesta > saldo)
-                printf("No puedes apostar mas de tu saldo \n");
+                printf("No puedes apostar mas de tu saldo \n");}
 
             else
             {
                 if (ganadas == 2)
+                {
                     acierto = false;
+                    estafar(copa1, copa2, copa3, seleccion);
+                }
                 else
                 {
                     jugar(copa1, copa2, copa3);
@@ -118,7 +124,7 @@ int main()
                     }
                 }
 
-                printf("\n %c %c %c",copa1, copa2, copa3);
+                printf("\n %c %c %c", copa1, copa2, copa3);
 
                 if (acierto)
                 {
