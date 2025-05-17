@@ -36,7 +36,7 @@ void estafar(char &copa1, char &copa2, char &copa3, int seleccion, int valor)
     if (seleccion == 3)
         valor = 1;
     else
-        valor += 1;
+        valor = seleccion + 1;
     generarCopas(copa1, copa2, copa3, valor);
 }
 
@@ -63,7 +63,7 @@ int main()
 
     const int MAX_MONTO = 1000;
     const int MIN_APUESTA = 50;
-    int saldo;
+    int saldo = 0;
     int apuesta;
     int seleccion;
     char copa1;
@@ -72,13 +72,14 @@ int main()
     bool acierto = false;
     int ganadas = 0;
     int valorAleatorio;
+    int ultimaJugada = 0;
 
-    printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. \nAhora dime, cuanto dinero tienes disponible? \n");
+    printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. ");
 
+    printf("\nAhora dime, cuanto dinero tienes disponible? \n");
     scanf("%d", &saldo);
-
-    if (saldo < MIN_APUESTA || MAX_MONTO > 1000)
-        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000");
+    if (saldo < MIN_APUESTA || saldo > 1000)
+        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000\n");
     else
     {
         printf("\nO O O");
@@ -87,7 +88,7 @@ int main()
 
         scanf("%d", &seleccion);
 
-        while (seleccion != 4 && saldo > MIN_APUESTA)
+        while (seleccion != 4 && saldo >= MIN_APUESTA)
         {
             valorAleatorio = rand() % 3 + 1;
 
@@ -141,6 +142,7 @@ int main()
             }
 
             modificarSaldo(saldo, apuesta, acierto);
+            ultimaJugada = apuesta;
 
             printf("\n");
 
@@ -148,14 +150,22 @@ int main()
                 printf("Para jugar hay que pagar amigo \n");
             else
             {
+
                 printf("\nO O O");
                 printf("\n1 2 3 \n");
                 printf("\nCopa?: ");
-
                 scanf("%d", &seleccion);
+                if (ultimaJugada > 200 && acierto == false && seleccion == 4)
+                    while (seleccion == 4)
+                    {
+                        printf("Debido a tu orgullo debes jugar esta partida, aun no puedes salir");
+                        printf("\nO O O");
+                        printf("\n1 2 3 \n");
+                        printf("\nCopa?: ");
+                        scanf("%d", &seleccion);
+                    }
             }
         }
-
-        printf("Nos vemos a la proxima");
     }
+    printf("Nos vemos a la proxima\n");
 }
