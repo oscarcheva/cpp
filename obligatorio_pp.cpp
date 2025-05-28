@@ -2,6 +2,40 @@
 #include <cstdlib>
 #include <ctime>
 
+    struct fecha{
+        int dia;
+        int mes;
+        int anio;
+    };
+
+struct jugador{
+    long cedula;
+    char nombre[20];
+    char apellido[20];
+    char alias[20];
+    int saldo;
+    bool activo;
+    struct fecha fechaNacimiento;
+
+};
+
+struct jugadores{
+    struct jugador participantes[50];
+    int tope;
+};
+
+struct apuesta{
+    int valorApuesta;
+    bool resultado;
+    char alias[20];
+};
+
+struct apuestas{
+    struct apuesta jugadas[10];
+    int tope;
+
+};
+
 void generarCopas(char &copa1, char &copa2, char &copa3, int valor)
 {
     if (valor == 1)
@@ -58,12 +92,13 @@ bool verificarResultado(char copa)
     return false;
 }
 
-int main()
-{
-
     const int MAX_MONTO = 1000;
     const int MIN_APUESTA = 50;
-    int saldo = 0;
+
+int main()
+{
+    struct jugador j;
+    int saldo = 1;
     int apuesta;
     int seleccion;
     char copa1;
