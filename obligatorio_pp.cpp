@@ -63,7 +63,7 @@ int main()
 
     const int MAX_MONTO = 1000;
     const int MIN_APUESTA = 50;
-    int saldo = 0;
+    int saldo = 1;
     int apuesta;
     int seleccion;
     char copa1;
