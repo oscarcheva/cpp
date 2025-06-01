@@ -81,7 +81,6 @@ bool aliasExiste(struct jugadores lista, char alias[]) {
 
 void altaJugador(struct jugadores *lista) {
     
-
     struct jugador nuevo;
     printf("Ingrese CI: ");
     scanf("%ld", &nuevo.cedula);
@@ -365,12 +364,55 @@ void juego(){
     }
     
 }
+
+void menuGestionDeUsuarios(struct jugadores *lista) {
+    int opcion;
+    do {
+        printf("Gestión de Usuario \n");
+        printf("1. Alta de jugador\n");
+        printf("2. Baja de jugador\n");
+        printf("3. Modificar jugador\n");
+        printf("4. Volver al menú principal\n");
+        printf("Seleccione una opción: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                altaJugador(lista);
+                break;
+            case 2:
+                bajaJugador(lista);
+                break;
+            case 3:
+                modificarJugador(lista);
+                break;
+            case 4:
+                printf("Volviendo al menú principal.\n");
+                break;
+            default:
+                printf("Opción inválida.\n");
+        }
+    } while (opcion != 4);
+}
 	
 int main()
 {
+    int seleccion;
+    
+    do {
+    printf("Menu de jugador, ingrese la opcion que desee.\n");
+    printf("1 - Gestion de jugadores.\n");
+    printf("2 - Consultas.\n");
+    printf("3 - Apostar.\n");
+    printf("4 - Salir.\n");
+
+
+    } while(seleccion!= 4);
 	juego();
     return 0;
 }
+
+
 
     
     
