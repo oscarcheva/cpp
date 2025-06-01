@@ -37,7 +37,158 @@ struct apuestas{
 
 };
 
+bool validarCI(long ci) {
+    return (ci >= 1000000 && ci <= 99999999);
+}
 
+bool esBisiesto(int anio) {
+    return (anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0));
+}
+
+int diasDelMes(int mes, int anio) {
+    switch (mes) {
+        case 2: return esBisiesto(anio) ? 29 : 28;
+        case 4: case 6: case 9: case 11: return 30;
+        default: return 31;
+    }
+}
+
+bool validarFecha(int d, int m, int a) {
+    if (a < 1900 || a > 2025) return false;
+    if (m < 1 || m > 12) return false;
+    int maxDias = diasDelMes(m, a);
+    return (d >= 1 && d <= maxDias);
+}
+
+bool sonIguales(char s1[], char s2[]) {
+    int i = 0;
+    while (s1[i] != '\0' && s2[i] != '\0') {
+        if (s1[i] != s2[i]) return false;
+        i++;
+    }
+    return s1[i] == '\0' && s2[i] == '\0';
+}
+
+bool aliasExiste(struct jugadores lista, char alias[]) {
+    for (int i = 0; i < lista.tope; i++) {
+        if (sonIguales(lista.participantes[i].alias, alias)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void altaJugador(struct jugadores *lista) {
+    
+
+    struct jugador nuevo;
+    printf("Ingrese CI: ");
+    scanf("%ld", &nuevo.cedula);
+    if (!validarCI(nuevo.cedula)) {
+        printf("CI inválida.\n");
+        return;
+    }
+
+    printf("Ingrese fecha de nacimiento (DD MM AAAA): ");
+    scanf("%d %d %d", &nuevo.fechaNacimiento.dia, &nuevo.fechaNacimiento.mes, &nuevo.fechaNacimiento.anio);
+    if (!validarFecha(nuevo.fechaNacimiento.dia, nuevo.fechaNacimiento.mes, nuevo.fechaNacimiento.anio)) {
+        printf("Fecha inválida.\n");
+        return;
+    }
+
+    printf("Ingrese nombre: ");
+    scanf("%s", nuevo.nombre);
+
+    printf("Ingrese apellido: ");
+    scanf("%s", nuevo.apellido);
+
+    printf("Ingrese alias: ");
+    scanf("%s", nuevo.alias);
+
+    for (int i = 0; i < lista->tope; i++) {
+        if (sonIguales(lista->participantes[i].alias, nuevo.alias)) {
+            if (!lista->participantes[i].activo) {
+                lista->participantes[i].activo = true;
+                printf("Jugador reactivado con éxito.\n");
+                return;
+            } else {
+                printf("El alias ya existe y está activo.\n");
+                return;
+            }
+        }
+    }
+
+    nuevo.saldo = 1000;
+    nuevo.activo = true;
+    lista->participantes[lista->tope] = nuevo;
+    lista->tope++;
+
+    printf("Jugador dado de alta exitosamente.\n");
+}
+
+void bajaJugador(struct jugadores *lista) {
+    char alias[20];
+    printf("Ingrese alias del jugador a dar de baja: ");
+    scanf("%s", alias);
+
+    for (int i = 0; i < lista->tope; i++) {
+        if (sonIguales(lista->participantes[i].alias, alias)) {
+            if (!lista->participantes[i].activo) {
+                printf("El jugador ya está inactivo.\n");
+                return;
+            }
+            lista->participantes[i].activo = false;
+            printf("Jugador dado de baja correctamente.\n");
+            return;
+        }
+    }
+    printf("Alias no encontrado.\n");
+}
+
+void modificarJugador(struct jugadores *lista) {
+    char alias[20];
+    printf("Ingrese alias del jugador a modificar: ");
+    scanf("%s", alias);
+
+    for (int i = 0; i < lista->tope; i++) {
+        if (sonIguales(lista->participantes[i].alias, alias) && lista->participantes[i].activo) {
+            printf("Nombre actual: %s\n", lista->participantes[i].nombre);
+            printf("Ingrese nuevo nombre: ");
+            scanf("%s", lista->participantes[i].nombre);
+
+            printf("Apellido actual: %s\n", lista->participantes[i].apellido);
+            printf("Ingrese nuevo apellido: ");
+            scanf("%s", lista->participantes[i].apellido);
+
+            printf("CI actual: %ld\n", lista->participantes[i].cedula);
+            printf("Ingrese nueva CI: ");
+            scanf("%ld", &lista->participantes[i].cedula);
+            if (!validarCI(lista->participantes[i].cedula)) {
+                printf("CI inválida. Cancelando.\n");
+                return;
+            }
+
+            printf("Fecha nacimiento actual: %d/%d/%d\n", lista->participantes[i].fechaNacimiento.dia,
+                   lista->participantes[i].fechaNacimiento.mes,
+                   lista->participantes[i].fechaNacimiento.anio);
+            printf("Ingrese nueva fecha de nacimiento (DD MM AAAA): ");
+            scanf("%d %d %d", &lista->participantes[i].fechaNacimiento.dia,
+                               &lista->participantes[i].fechaNacimiento.mes,
+                               &lista->participantes[i].fechaNacimiento.anio);
+            if (!validarFecha(lista->participantes[i].fechaNacimiento.dia,
+                              lista->participantes[i].fechaNacimiento.mes,
+                              lista->participantes[i].fechaNacimiento.anio)) {
+                printf("Fecha inválida. Cancelando.\n");
+                return;
+            }
+
+            printf("Datos modificados exitosamente.\n");
+            return;
+        }
+    }
+    printf("Alias no encontrado o jugador inactivo.\n");
+}
 
 void generarCopas(char &copa1, char &copa2, char &copa3, int valor)
 {
@@ -214,11 +365,6 @@ void juego(){
     }
     
 }
-
-			
-			
-}
-	
 	
 int main()
 {
