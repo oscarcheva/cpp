@@ -1,8 +1,9 @@
+
 #include <stdio.h>
 #include <cstdlib>
 #include <ctime>
 
-    struct fecha{
+ struct fecha{
         int dia;
         int mes;
         int anio;
@@ -35,6 +36,8 @@ struct apuestas{
     int tope;
 
 };
+
+
 
 void generarCopas(char &copa1, char &copa2, char &copa3, int valor)
 {
@@ -70,7 +73,9 @@ void estafar(char &copa1, char &copa2, char &copa3, int seleccion, int valor)
     if (seleccion == 3)
         valor = 1;
     else
+        valor += 1;
         valor = seleccion + 1;
+    generarCopas(copa1, copa2, copa3, valor);
     generarCopas(copa1, copa2, copa3, valor);
 }
 
@@ -91,14 +96,11 @@ bool verificarResultado(char copa)
 
     return false;
 }
-
+void juego(){
     const int MAX_MONTO = 1000;
     const int MIN_APUESTA = 50;
-
-int main()
-{
-    struct jugador j;
-    int saldo = 1;
+    
+    int saldo = 0;
     int apuesta;
     int seleccion;
     char copa1;
@@ -109,10 +111,14 @@ int main()
     int valorAleatorio;
     int ultimaJugada = 0;
 
+    printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. \nAhora dime, cuanto dinero tienes disponible? \n");
     printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. ");
 
     printf("\nAhora dime, cuanto dinero tienes disponible? \n");
     scanf("%d", &saldo);
+
+    if (saldo < MIN_APUESTA || MAX_MONTO > 1000)
+        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000");
     if (saldo < MIN_APUESTA || saldo > 1000)
         printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000\n");
     else
@@ -123,6 +129,7 @@ int main()
 
         scanf("%d", &seleccion);
 
+        while (seleccion != 4 && saldo > MIN_APUESTA)
         while (seleccion != 4 && saldo >= MIN_APUESTA)
         {
             valorAleatorio = rand() % 3 + 1;
@@ -189,6 +196,7 @@ int main()
                 printf("\nO O O");
                 printf("\n1 2 3 \n");
                 printf("\nCopa?: ");
+
                 scanf("%d", &seleccion);
                 if (ultimaJugada > 200 && acierto == false && seleccion == 4)
                     while (seleccion == 4)
@@ -201,6 +209,24 @@ int main()
                     }
             }
         }
+
+        printf("Nos vemos a la proxima");
     }
-    printf("Nos vemos a la proxima\n");
+    
 }
+
+			
+			
+}
+	
+	
+int main()
+{
+	juego();
+    return 0;
+}
+
+    
+    
+    
+    
