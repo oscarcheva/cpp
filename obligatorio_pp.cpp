@@ -394,6 +394,10 @@ void menuGestionDeUsuarios(struct jugadores *lista) {
         }
     } while (opcion != 4);
 }
+
+void menuConsultas(){
+	
+}
 	
 int main()
 {
@@ -401,10 +405,29 @@ int main()
     
     do {
     printf("Menu de jugador, ingrese la opcion que desee.\n");
-    printf("1 - Gestion de jugadores.\n");
-    printf("2 - Consultas.\n");
-    printf("3 - Apostar.\n");
-    printf("4 - Salir.\n");
+    printf("************** 1 - Gestion de jugadores. ****\n");
+    printf("************** 2 - Consultas. ***************\n");
+    printf("************** 3 - Apostar. *****************\n");
+    printf("************** 4 - Salir. *******************\n");
+    scanf("%d", seleccion);
+    switch(seleccion){
+    	case 1:
+			menuGestionDeUsuarios(jugadores);
+    		break;
+    	case 2:
+			menuConsultas();
+			break;
+		case 3:
+			juego();
+			break;
+		case 4:
+			printf("nos vemos la proxima amigo");
+			break;
+		default:
+			printf("por favor ingrese datos validos");
+			break;
+	}
+    
 
 
     } while(seleccion!= 4);
