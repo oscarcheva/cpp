@@ -40,6 +40,7 @@ struct apuestas
     int tope;
 };
 
+
 void generarCopas(char &copa1, char &copa2, char &copa3, int valor)
 {
     if (valor == 1)
@@ -435,9 +436,50 @@ void menuGestionDeUsuarios(struct jugadores &todosJugadores)
         }
     } while (opcion != 4);
 }
-
-void menuConsultas()
+void listadoJugadores(struct jugadores)
 {
+ for (int i=0;i<=jugadores.tope;i++)
+     { struct jugador participante = jugadores.participantes[i];
+
+        if (participante.activo)
+           printf(participante.cedula,participante.nombre,participante.apellido,participante.alias,participante.saldo)
+     }
+} 
+void listadoTodasLasApuestas(struct apuestas){
+
+}
+void listatadoDeApuestasPorJugador(){
+
+}
+
+void menuConsultas(struct jugadores)
+{
+ do
+    {
+        printf("Menu de consulta, ingrese la opcion que desee.\n");
+        printf("************** 1 - listado de jugadores. ****\n");
+        printf("************** 2 - listado de todas las apuestas. ***************\n");
+        printf("************** 3 - listdo de apuestas por jugador. *****************\n");
+        printf("************** 4 - Salir. *******************\n");
+        scanf("%d", &seleccion);
+        switch (seleccion)
+        {
+        case 1:
+            listadoJugadores(jugadores);
+            break;
+        case 2:
+            listadoTodasLasApuestas(apuestas);
+            break;
+        case 3:
+            listadoDeApuestasPorJugador();
+            break;
+        default:
+            printf("por favor ingrese datos validos");
+            break;
+        }
+
+    } while (seleccion != 4);
+
 }
 
 int main()
@@ -459,7 +501,7 @@ int main()
             menuGestionDeUsuarios(todosJugadores);
             break;
         case 2:
-            menuConsultas();
+            menuConsultas(jugadores);
             break;
         case 3:
             juego();
