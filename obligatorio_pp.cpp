@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
+
 
 struct fecha
 {
@@ -39,7 +41,6 @@ struct apuestas
     struct apuesta jugadas[10];
     int tope;
 };
-
 
 void generarCopas(char &copa1, char &copa2, char &copa3, int valor)
 {
@@ -404,7 +405,7 @@ void modificarJugador(struct jugadores &todosJugadores)
     printf("Alias no encontrado o jugador inactivo.\n");
 }
 
-void menuGestionDeUsuarios(struct jugadores &todosJugadores)
+void menuGestionDeUsuarios(struct jugadores& todosJugadores)
 {
     int opcion;
     do
@@ -436,42 +437,54 @@ void menuGestionDeUsuarios(struct jugadores &todosJugadores)
         }
     } while (opcion != 4);
 }
-void listadoJugadores(struct jugadores)
+void listadoJugadores(struct jugadores participantes)
 {
- for (int i=0;i<=jugadores.tope;i++)
-     { struct jugador participante = jugadores.participantes[i];
+    if (participantes.tope!=0){
+    
+    printf("%-12s %-10s %-12s %-10s %-6s\n", "Cedula", "Nombre", "Apellido", "Alias", "Saldo");
+    
+    for (int i = 0; i <= participantes.tope; i++){
+    
+        struct jugador participante = participantes.participantes[i];
 
         if (participante.activo)
-           printf(participante.cedula,participante.nombre,participante.apellido,participante.alias,participante.saldo)
-     }
-} 
-void listadoTodasLasApuestas(struct apuestas){
-
+            printf("%-12ld %-10s %-12s %-10s %-6d\n", 
+                participante.cedula, 
+                participante.nombre, 
+                participante.apellido, 
+                participante.alias, 
+                participante.saldo);
+    }
 }
-void listatadoDeApuestasPorJugador(){
-
 }
-
-void menuConsultas(struct jugadores)
+void listadoTodasLasApuestas(struct apuestas jugadas)
 {
- do
+}
+void listatadoDeApuestasPorJugador()
+{
+}
+
+void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
+{
+    int seleccion = 0;
+    do
     {
         printf("Menu de consulta, ingrese la opcion que desee.\n");
-        printf("************** 1 - listado de jugadores. ****\n");
-        printf("************** 2 - listado de todas las apuestas. ***************\n");
-        printf("************** 3 - listdo de apuestas por jugador. *****************\n");
+        printf("************** 1 - Listado de jugadores. ****\n");
+        printf("************** 2 - Listado de todas las apuestas. ***************\n");
+        printf("************** 3 - Listado de apuestas por jugador. *****************\n");
         printf("************** 4 - Salir. *******************\n");
         scanf("%d", &seleccion);
         switch (seleccion)
         {
         case 1:
-            listadoJugadores(jugadores);
+            listadoJugadores(participantes);
             break;
         case 2:
-            listadoTodasLasApuestas(apuestas);
+            listadoTodasLasApuestas(jugadas);
             break;
         case 3:
-            listadoDeApuestasPorJugador();
+            listatadoDeApuestasPorJugador();
             break;
         default:
             printf("por favor ingrese datos validos");
@@ -479,12 +492,74 @@ void menuConsultas(struct jugadores)
         }
 
     } while (seleccion != 4);
+}
 
+void dataDePrueba(struct jugadores& todosJugadores, struct apuestas& todasApuestas){
+    
+    jugador j1;
+    j1.cedula = 123456789;
+    strcpy(j1.nombre, "Carlos");
+    strcpy(j1.apellido, "Perez");
+    strcpy(j1.alias, "Carlito");
+    j1.saldo = 1000;
+    j1.activo = true;
+    j1.fechaNacimiento = {15, 6, 1990};
+
+    jugador j2;
+    j2.cedula = 987654321;
+    strcpy(j2.nombre, "Maria");
+    strcpy(j2.apellido, "Lopez");
+    strcpy(j2.alias, "Marita");
+    j2.saldo = 1500;
+    j2.activo = true;
+    j2.fechaNacimiento = {22, 12, 1985};
+
+    jugador j3;
+    j3.cedula = 555444333;
+    strcpy(j3.nombre, "Juan");
+    strcpy(j3.apellido, "Garcia");
+    strcpy(j3.alias, "Juanca");
+    j3.saldo = 750;
+    j3.activo = false;
+    j3.fechaNacimiento = {3, 9, 1995};
+
+    todosJugadores.participantes[0] = j1;
+    todosJugadores.participantes[1] = j2;
+    todosJugadores.participantes[2] = j3;
+    todosJugadores.tope = 3;
+
+    // Create apuestas2
+
+
+    apuesta a1;
+    a1.valorApuesta = 100;
+    a1.resultado = true;
+    strcpy(a1.alias, "Carlito");
+
+    apuesta a2;
+    a2.valorApuesta = 50;
+    a2.resultado = false;
+    strcpy(a2.alias, "Marita");
+
+    apuesta a3;
+    a3.valorApuesta = 200;
+    a3.resultado = true;
+    strcpy(a3.alias, "Juanca");
+
+    todasApuestas.jugadas[0] = a1;
+    todasApuestas.jugadas[1] = a2;
+    todasApuestas.jugadas[2] = a3;
+    todasApuestas.tope = 3;
 }
 
 int main()
 {
-    struct jugadores todosJugadores;
+ 
+    struct jugadores jugadores;
+    struct apuestas apuestas;
+
+    dataDePrueba(jugadores, apuestas);
+
     int seleccion;
 
     do
@@ -498,19 +573,19 @@ int main()
         switch (seleccion)
         {
         case 1:
-            menuGestionDeUsuarios(todosJugadores);
+            menuGestionDeUsuarios(jugadores);
             break;
         case 2:
-            menuConsultas(jugadores);
+            menuConsultas(jugadores, apuestas);
             break;
         case 3:
             juego();
             break;
         case 4:
-            printf("nos vemos la proxima amigo");
+            printf("Nos vemos a la proxima amigo");
             break;
         default:
-            printf("por favor ingrese datos validos");
+            printf("Por favor ingrese datos validos");
             break;
         }
 
