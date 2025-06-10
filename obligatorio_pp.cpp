@@ -4,6 +4,7 @@
 #include <ctime>
 #include <cstring>
 
+const int LIMITE_EN_ARRAYS = 20;
 
 struct fecha
 {
@@ -15,9 +16,9 @@ struct fecha
 struct jugador
 {
     long cedula;
-    char nombre[20];
-    char apellido[20];
-    char alias[20];
+    char nombre[LIMITE_EN_ARRAYS];
+    char apellido[LIMITE_EN_ARRAYS];
+    char alias[LIMITE_EN_ARRAYS];
     int saldo;
     bool activo;
     struct fecha fechaNacimiento;
@@ -33,7 +34,8 @@ struct apuesta
 {
     int valorApuesta;
     bool resultado;
-    char alias[20];
+    char alias[LIMITE_EN_ARRAYS];
+    int saldoResultante;
 };
 
 struct apuestas
@@ -99,122 +101,14 @@ bool verificarResultado(char copa)
 
     return false;
 }
-void juego()
+
+void copiarNombre(char entrada[], char salida[], int maxSize)
 {
-    const int MAX_MONTO = 1000;
-    const int MIN_APUESTA = 50;
-
-    int saldo = 0;
-    int apuesta;
-    int seleccion;
-    char copa1;
-    char copa2;
-    char copa3;
-    bool acierto = false;
-    int ganadas = 0;
-    int valorAleatorio;
-    int ultimaJugada = 0;
-
-    printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. \nAhora dime, cuanto dinero tienes disponible? \n");
-    printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. ");
-
-    printf("\nAhora dime, cuanto dinero tienes disponible? \n");
-    scanf("%d", &saldo);
-
-    if (saldo < MIN_APUESTA || MAX_MONTO > 1000)
-        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000");
-    if (saldo < MIN_APUESTA || saldo > 1000)
-        printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000\n");
-    else
+    for (int i = 0; i < maxSize; ++i)
     {
-        printf("\nO O O");
-        printf("\n1 2 3 \n");
-        printf("\nCopa?: ");
-
-        scanf("%d", &seleccion);
-
-        while (seleccion != 4 && saldo > MIN_APUESTA)
-            while (seleccion != 4 && saldo >= MIN_APUESTA)
-            {
-                valorAleatorio = rand() % 3 + 1;
-
-                apuesta = 0;
-                while (apuesta < MIN_APUESTA || apuesta > saldo)
-                {
-                    printf("Apuesta?: ");
-                    scanf("%d", &apuesta);
-                    if (apuesta < MIN_APUESTA)
-                        printf("Para jugar hay que pagar amigo \n");
-
-                    else if (apuesta > saldo)
-                        printf("No puedes apostar mas de tu saldo \n");
-                }
-
-                if (ganadas == 2)
-                {
-                    acierto = false;
-                    estafar(copa1, copa2, copa3, seleccion, valorAleatorio);
-                }
-                else
-                {
-
-                    jugar(copa1, copa2, copa3, valorAleatorio);
-
-                    switch (seleccion)
-                    {
-                    case 1:
-                        acierto = verificarResultado(copa1);
-                        break;
-                    case 2:
-                        acierto = verificarResultado(copa2);
-                        break;
-                    case 3:
-                        acierto = verificarResultado(copa3);
-                        break;
-                    }
-                }
-
-                printf("\n %c %c %c \n", copa1, copa2, copa3);
-
-                if (acierto)
-                {
-                    printf("\nHa acertado ");
-                    ganadas++;
-                }
-                else
-                {
-                    printf("\nNo ha acertado ");
-                    ganadas = 0;
-                }
-
-                modificarSaldo(saldo, apuesta, acierto);
-                ultimaJugada = apuesta;
-
-                printf("\n");
-
-                if (saldo < MIN_APUESTA)
-                    printf("Para jugar hay que pagar amigo \n");
-                else
-                {
-
-                    printf("\nO O O");
-                    printf("\n1 2 3 \n");
-                    printf("\nCopa?: ");
-
-                    scanf("%d", &seleccion);
-                    if (ultimaJugada > 200 && acierto == false && seleccion == 4)
-                        while (seleccion == 4)
-                        {
-                            printf("Debido a tu orgullo debes jugar esta partida, aun no puedes salir");
-                            printf("\nO O O");
-                            printf("\n1 2 3 \n");
-                            printf("\nCopa?: ");
-                            scanf("%d", &seleccion);
-                        }
-                }
-            }
-
-        printf("Nos vemos a la proxima");
+        salida[i] = entrada[i];
+        if (entrada[i] == '\0')
+            break;
     }
 }
 
@@ -278,6 +172,18 @@ bool aliasExiste(struct jugadores lista, char alias[])
     return false;
 }
 
+int buscarAlias(struct jugadores lista, char alias[])
+{
+    for (int i = 0; i < lista.tope; i++)
+    {
+        if (sonIguales(lista.participantes[i].alias, alias))
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void altaJugador(struct jugadores &todosJugadores)
 {
 
@@ -335,7 +241,7 @@ void altaJugador(struct jugadores &todosJugadores)
 
 void bajaJugador(struct jugadores &todosJugadores)
 {
-    char alias[20];
+    char alias[LIMITE_EN_ARRAYS];
     printf("Ingrese alias del jugador a dar de baja: ");
     scanf("%s", alias);
 
@@ -358,7 +264,7 @@ void bajaJugador(struct jugadores &todosJugadores)
 
 void modificarJugador(struct jugadores &todosJugadores)
 {
-    char alias[20];
+    char alias[LIMITE_EN_ARRAYS];
     printf("Ingrese alias del jugador a modificar: ");
     scanf("%s", alias);
 
@@ -405,7 +311,7 @@ void modificarJugador(struct jugadores &todosJugadores)
     printf("Alias no encontrado o jugador inactivo.\n");
 }
 
-void menuGestionDeUsuarios(struct jugadores& todosJugadores)
+void menuGestionDeUsuarios(struct jugadores &todosJugadores)
 {
     int opcion;
     do
@@ -439,29 +345,94 @@ void menuGestionDeUsuarios(struct jugadores& todosJugadores)
 }
 void listadoJugadores(struct jugadores participantes)
 {
-    if (participantes.tope!=0){
-    
-    printf("%-12s %-10s %-12s %-10s %-6s\n", "Cedula", "Nombre", "Apellido", "Alias", "Saldo");
-    
-    for (int i = 0; i <= participantes.tope; i++){
-    
-        struct jugador participante = participantes.participantes[i];
+    if (participantes.tope != 0)
+    {
 
-        if (participante.activo)
-            printf("%-12ld %-10s %-12s %-10s %-6d\n", 
-                participante.cedula, 
-                participante.nombre, 
-                participante.apellido, 
-                participante.alias, 
-                participante.saldo);
+        printf("%-12s %-10s %-12s %-10s %-6s\n", "Cedula", "Nombre", "Apellido", "Alias", "Saldo");
+
+        for (int i = 0; i <= participantes.tope - 1; i++)
+        {
+
+            struct jugador participante = participantes.participantes[i];
+
+            if (participante.activo)
+                printf("%-12ld %-10s %-12s %-10s %-6d\n",
+                       participante.cedula,
+                       participante.nombre,
+                       participante.apellido,
+                       participante.alias,
+                       participante.saldo);
+        }
+        printf("\n");
     }
-}
 }
 void listadoTodasLasApuestas(struct apuestas jugadas)
 {
+
+    if (jugadas.tope != 0)
+    {
+
+        printf("%-12s %-10s %-20s\n", "Alias", " Gano?", "   Apostado");
+
+        for (int i = 0; i <= jugadas.tope - 1; i++)
+        {
+
+            struct apuesta jugada = jugadas.jugadas[i];
+
+            printf("%-10s",
+                   jugada.alias);
+
+            if (jugada.resultado)
+                printf("%-10s", "Si Ha acertado");
+            else
+                printf("%-10s", "No ha acertado");
+
+            printf("     %d\n",
+                   jugada.valorApuesta);
+        }
+        printf("\n");
+    }
 }
-void listatadoDeApuestasPorJugador()
+void listadoDeApuestasPorJugador(struct jugadores jugadores, char alias[LIMITE_EN_ARRAYS], struct apuestas jugadas)
 {
+    int indiceJugador = buscarAlias(jugadores, alias);
+    if (indiceJugador == -1)
+        printf("El alias no existe");
+    else
+    {
+        struct jugador participante = jugadores.participantes[indiceJugador];
+    
+    if (jugadas.tope != 0)
+    {
+
+        printf("Las apuestas de %s que tiene un saldo actual de %d son: \n",alias, participante.saldo);
+        printf("\n");
+        printf("%-12s %-10s %-20s\n", "Gano?","   Apostado","      Saldo Resultante");
+
+        for (int i = 0; i <= jugadas.tope - 1; i++)
+        {
+            if(sonIguales(alias,jugadas.jugadas[i].alias))
+            {
+            struct apuesta jugada = jugadas.jugadas[i];
+            if (sonIguales(jugada.alias, alias))
+            {
+
+                if (jugada.resultado)
+                    printf("%-10s", "Si Ha acertado");
+                else
+                    printf("%-10s", "No ha acertado");
+
+                printf("    %d",
+                       jugada.valorApuesta);
+
+                printf("             %d\n",
+                       jugada.saldoResultante);       
+            }
+        }
+    }
+}
+        printf("\n");
+    }
 }
 
 void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
@@ -469,11 +440,11 @@ void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
     int seleccion = 0;
     do
     {
-        printf("Menu de consulta, ingrese la opcion que desee.\n");
-        printf("************** 1 - Listado de jugadores. ****\n");
-        printf("************** 2 - Listado de todas las apuestas. ***************\n");
-        printf("************** 3 - Listado de apuestas por jugador. *****************\n");
-        printf("************** 4 - Salir. *******************\n");
+        printf("*** Menu de consulta, ingrese la opcion que desee.***\n");
+        printf("********** 1 - Listado de jugadores. ****************\n");
+        printf("********** 2 - Listado de todas las apuestas.********\n");
+        printf("********** 3 - Listado de apuestas por jugador.******\n");
+        printf("********** 4 - Salir. *******************************\n");
         scanf("%d", &seleccion);
         switch (seleccion)
         {
@@ -484,7 +455,10 @@ void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
             listadoTodasLasApuestas(jugadas);
             break;
         case 3:
-            listatadoDeApuestasPorJugador();
+            char alias[LIMITE_EN_ARRAYS];
+            printf("Por favor ingrese el alias del jugador: ");
+            scanf("%s", &alias);
+            listadoDeApuestasPorJugador(participantes, alias, jugadas);
             break;
         default:
             printf("por favor ingrese datos validos");
@@ -494,14 +468,15 @@ void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
     } while (seleccion != 4);
 }
 
-void dataDePrueba(struct jugadores& todosJugadores, struct apuestas& todasApuestas){
-    
+void dataDePrueba(struct jugadores &todosJugadores, struct apuestas &todasApuestas)
+{
+
     jugador j1;
     j1.cedula = 123456789;
     strcpy(j1.nombre, "Carlos");
     strcpy(j1.apellido, "Perez");
-    strcpy(j1.alias, "Carlito");
-    j1.saldo = 1000;
+    strcpy(j1.alias, "Carleto");
+    j1.saldo = 600;
     j1.activo = true;
     j1.fechaNacimiento = {15, 6, 1990};
 
@@ -510,7 +485,7 @@ void dataDePrueba(struct jugadores& todosJugadores, struct apuestas& todasApuest
     strcpy(j2.nombre, "Maria");
     strcpy(j2.apellido, "Lopez");
     strcpy(j2.alias, "Marita");
-    j2.saldo = 1500;
+    j2.saldo = 1000;
     j2.activo = true;
     j2.fechaNacimiento = {22, 12, 1985};
 
@@ -519,42 +494,199 @@ void dataDePrueba(struct jugadores& todosJugadores, struct apuestas& todasApuest
     strcpy(j3.nombre, "Juan");
     strcpy(j3.apellido, "Garcia");
     strcpy(j3.alias, "Juanca");
-    j3.saldo = 750;
+    j3.saldo = 800;
     j3.activo = false;
     j3.fechaNacimiento = {3, 9, 1995};
+
+    jugador j4;
+    j4.cedula = 63333333;
+    strcpy(j4.nombre, "messi");
+    strcpy(j4.apellido, "messi");
+    strcpy(j4.alias, "messi");
+    j4.saldo = 1000;
+    j4.activo = true;
+    j4.fechaNacimiento = {3, 9, 1995};
 
     todosJugadores.participantes[0] = j1;
     todosJugadores.participantes[1] = j2;
     todosJugadores.participantes[2] = j3;
-    todosJugadores.tope = 3;
+    todosJugadores.participantes[3] = j4;
+    todosJugadores.tope = 4;
 
     // Create apuestas2
-
 
     apuesta a1;
     a1.valorApuesta = 100;
     a1.resultado = true;
-    strcpy(a1.alias, "Carlito");
+    a1.saldoResultante = 1100;
+
+    strcpy(a1.alias, "Carleto");
 
     apuesta a2;
     a2.valorApuesta = 50;
     a2.resultado = false;
     strcpy(a2.alias, "Marita");
+    a2.saldoResultante = 950;
+
 
     apuesta a3;
     a3.valorApuesta = 200;
     a3.resultado = true;
     strcpy(a3.alias, "Juanca");
+    a3.saldoResultante = 1000;
+
+    apuesta a4;
+    a4.valorApuesta = 500;
+    a4.resultado = false;
+    strcpy(a4.alias, "Carleto");
+    a4.saldoResultante = 600;
+
 
     todasApuestas.jugadas[0] = a1;
     todasApuestas.jugadas[1] = a2;
     todasApuestas.jugadas[2] = a3;
-    todasApuestas.tope = 3;
+    todasApuestas.jugadas[3] = a4;
+
+    todasApuestas.tope = 4;
+}
+
+void juego(struct jugadores &jugadores, char alias[LIMITE_EN_ARRAYS], struct apuestas &jugadas)
+{
+    int indiceJugador = buscarAlias(jugadores, alias);
+    if (indiceJugador == -1)
+        printf("El alias no existe");
+    else
+    {
+        struct jugador participante = jugadores.participantes[indiceJugador];
+        const int MAX_MONTO = 1000;
+        const int MIN_APUESTA = 50;
+
+        int saldo = participante.saldo;
+        int apuesta;
+        int seleccion;
+        char copa1;
+        char copa2;
+        char copa3;
+        bool acierto = false;
+        int ganadas = 0;
+        int valorAleatorio;
+        int ultimaJugada = 0;
+
+        printf("Bienvenido/a, a continuación comenzaremos a jugar.\nPara cada jugada debes indicar con un '1', '2', o '3', en qué copa se encuentra la bola.\nRecuerda que también puedes optar por retirarte indicándolo con un '4'. \nAhora dime, cuanto dinero tienes disponible? \n");
+
+        if (saldo < MIN_APUESTA || MAX_MONTO > 1000)
+            printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000");
+        if (saldo < MIN_APUESTA || saldo > 1000)
+            printf("El saldo inicial debe ser igual o mayor a 50 y menor o igual a 1000\n");
+        else
+        {
+            printf("\nO O O");
+            printf("\n1 2 3 \n");
+            printf("\nCopa?: ");
+
+            scanf("%d", &seleccion);
+
+            while (seleccion != 4 && saldo > MIN_APUESTA)
+                while (seleccion != 4 && saldo >= MIN_APUESTA)
+                {
+                    valorAleatorio = rand() % 3 + 1;
+
+                    apuesta = 0;
+                    while (apuesta < MIN_APUESTA || apuesta > saldo)
+                    {
+                        printf("Apuesta?: ");
+                        scanf("%d", &apuesta);
+                        if (apuesta < MIN_APUESTA)
+                            printf("Para jugar hay que pagar amigo \n");
+
+                        else if (apuesta > saldo)
+                            printf("No puedes apostar mas de tu saldo \n");
+                    }
+
+                    if (ganadas == 2)
+                    {
+                        acierto = false;
+                        estafar(copa1, copa2, copa3, seleccion, valorAleatorio);
+                    }
+                    else
+                    {
+
+                        jugar(copa1, copa2, copa3, valorAleatorio);
+
+                        switch (seleccion)
+                        {
+                        case 1:
+                            acierto = verificarResultado(copa1);
+                            break;
+                        case 2:
+                            acierto = verificarResultado(copa2);
+                            break;
+                        case 3:
+                            acierto = verificarResultado(copa3);
+                            break;
+                        }
+                    }
+
+                    printf("\n %c %c %c \n", copa1, copa2, copa3);
+
+                    if (acierto)
+                    {
+                        printf("\nHa acertado ");
+                        ganadas++;
+                    }
+                    else
+                    {
+                        printf("\nNo ha acertado ");
+                        ganadas = 0;
+                    }
+
+                    modificarSaldo(participante.saldo, apuesta, acierto);
+                    ultimaJugada = apuesta;
+
+                    printf("\n");
+
+                    struct apuesta jugada;
+
+                    copiarNombre(alias, jugada.alias, LIMITE_EN_ARRAYS);
+                    jugada.resultado = acierto;
+                    jugada.valorApuesta = apuesta;
+                    jugada.saldoResultante = participante.saldo;
+
+                    jugadores.participantes[indiceJugador] = participante;
+
+                    jugadas.jugadas[jugadas.tope] = jugada;
+                    jugadas.tope++;
+
+                    if (saldo < MIN_APUESTA)
+                        printf("Para jugar hay que pagar amigo \n");
+                    else
+                    {
+
+                        printf("\nO O O");
+                        printf("\n1 2 3 \n");
+                        printf("\nCopa?: ");
+
+                        scanf("%d", &seleccion);
+                        if (ultimaJugada > 200 && acierto == false && seleccion == 4)
+                            while (seleccion == 4)
+                            {
+                                printf("Debido a tu orgullo debes jugar esta partida, aun no puedes salir");
+                                printf("\nO O O");
+                                printf("\n1 2 3 \n");
+                                printf("\nCopa?: ");
+                                scanf("%d", &seleccion);
+                            }
+                    }
+                }
+
+            printf("Nos vemos a la proxima");
+        }
+    }
 }
 
 int main()
 {
- 
+
     struct jugadores jugadores;
     struct apuestas apuestas;
 
@@ -579,7 +711,10 @@ int main()
             menuConsultas(jugadores, apuestas);
             break;
         case 3:
-            juego();
+            char alias[LIMITE_EN_ARRAYS];
+            printf("Por favor ingrese el alias del jugador: ");
+            scanf("%s", &alias);
+            juego(jugadores, alias, apuestas);
             break;
         case 4:
             printf("Nos vemos a la proxima amigo");
