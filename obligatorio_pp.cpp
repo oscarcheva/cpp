@@ -377,8 +377,10 @@ void ordenarJugadores(struct jugadores &jugadores)
             {
                 jugadores.participantes[puntero] = verificado;
                 jugadores.participantes[puntero - 1] = verificador;
+                puntero--;
             }
-            puntero--;
+            else
+            puntero =0;
         }
     }
 }
@@ -695,6 +697,7 @@ void juego(struct jugadores &jugadores, char alias[LIMITE_EN_ARRAYS], struct apu
                     struct apuesta jugada;
 
                     copiarNombre(alias, jugada.alias, LIMITE_EN_ARRAYS);
+                                        
                     jugada.resultado = acierto;
                     jugada.valorApuesta = apuesta;
                     jugada.saldoResultante = participante.saldo;
