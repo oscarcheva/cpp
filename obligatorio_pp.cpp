@@ -440,14 +440,14 @@ void listadoTodasLasApuestas(struct apuestas apuestas)
         printf("\n");
     }
     else{
-        printf("No existen jugadores registrados");
+        printf("No existen apuestas registradas");
     }
 }
 void listadoDeApuestasPorJugador(struct jugadores jugadores, char alias[LIMITE_EN_ARRAYS], struct apuestas jugadas)
 {
     int indiceJugador = buscarAlias(jugadores, alias);
     if (indiceJugador == -1)
-        printf("El alias no existe");
+        printf("El alias no existe\n");
     else
     {
         struct jugador participante = jugadores.participantes[indiceJugador];
