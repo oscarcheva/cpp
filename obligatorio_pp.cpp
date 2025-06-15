@@ -81,7 +81,6 @@ void estafar(char &copa1, char &copa2, char &copa3, int seleccion, int valor)
         valor += 1;
     valor = seleccion + 1;
     generarCopas(copa1, copa2, copa3, valor);
-    generarCopas(copa1, copa2, copa3, valor);
 }
 
 void modificarSaldo(int &saldo, int &apuesta, bool gano)
@@ -102,9 +101,10 @@ bool verificarResultado(char copa)
     return false;
 }
 
-void copiarNombre(char entrada[], char salida[], int maxSize)
+/// Copia el alias del alias del jugador al alias de la apuesta
+void copiarNombre(char entrada[], char salida[])
 {
-    for (int i = 0; i < maxSize; ++i)
+    for (int i = 0; i < LIMITE_EN_ARRAYS; ++i)
     {
         salida[i] = entrada[i];
         if (entrada[i] == '\0')
@@ -122,6 +122,7 @@ bool esBisiesto(int anio)
     return (anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0));
 }
 
+// Devuelve la cantidad de dias segun el mes
 int diasDelMes(int mes, int anio)
 {
     switch (mes)
@@ -138,14 +139,14 @@ int diasDelMes(int mes, int anio)
     }
 }
 
-bool validarFecha(int d, int m, int a)
+bool validarFecha(int dia, int mes, int anio)
 {
-    if (a < 1900 || a > 2025)
+    if (anio < 1900 || anio > 2025)
         return false;
-    if (m < 1 || m > 12)
+    if (mes < 1 || mes > 12)
         return false;
-    int maxDias = diasDelMes(m, a);
-    return (d >= 1 && d <= maxDias);
+    int maxDias = diasDelMes(mes, anio);
+    return (dia >= 1 && dia <= maxDias);
 }
 
 bool sonIguales(char aliasJugador[], char aliasJugadores[])
@@ -175,6 +176,7 @@ bool esMayor(char jugadorAdelante[], char jugadorAtras[])
     return true;
 }
 
+// Se revisa el alias de cada jugador en el struct de jugadores con el alias ingresado por texto
 bool aliasExiste(struct jugadores lista, char alias[])
 {
     for (int i = 0; i < lista.tope; i++)
@@ -187,6 +189,7 @@ bool aliasExiste(struct jugadores lista, char alias[])
     return false;
 }
 
+// Se revisa el alias de cada jugador en el struct de jugadores con el alias ingresado por texto y devuelve el indice del
 int buscarAlias(struct jugadores lista, char alias[])
 {
     for (int i = 0; i < lista.tope; i++)
@@ -363,8 +366,6 @@ void ordenarJugadores(struct jugadores &jugadores)
 {
     struct jugador verificador, verificado;
     int puntero;
-    int segundoPuntero;
-    bool cambia;
     for (int p = 1; p < jugadores.tope; p++)
     {
         puntero = p;
@@ -377,23 +378,26 @@ void ordenarJugadores(struct jugadores &jugadores)
             {
                 jugadores.participantes[puntero] = verificado;
                 jugadores.participantes[puntero - 1] = verificador;
+                puntero--;
             }
-            puntero--;
+            else{
+                puntero = 0;
+            }
         }
     }
 }
 
-void listadoJugadores(struct jugadores participantes)
+void listadoJugadores(struct jugadores jugadores)
 {
-    if (participantes.tope != 0)
+    if (jugadores.tope != 0)
     {
-        ordenarJugadores(participantes);
+        ordenarJugadores(jugadores);
         printf("%-12s %-10s %-12s %-10s %-6s\n", "Cedula", "Nombre", "Apellido", "Alias", "Saldo");
 
-        for (int i = 0; i <= participantes.tope - 1; i++)
+        for (int i = 0; i <= jugadores.tope - 1; i++)
         {
 
-            struct jugador participante = participantes.participantes[i];
+            struct jugador participante = jugadores.participantes[i];
 
             if (participante.activo)
                 printf("%-12ld %-10s %-12s %-10s %-6d\n",
@@ -405,19 +409,22 @@ void listadoJugadores(struct jugadores participantes)
         }
         printf("\n");
     }
+    else
+        printf("No existen jugadores registrados");
+
 }
-void listadoTodasLasApuestas(struct apuestas jugadas)
+void listadoTodasLasApuestas(struct apuestas apuestas)
 {
 
-    if (jugadas.tope != 0)
+    if (apuestas.tope != 0)
     {
 
         printf("%-12s %-10s %-20s\n", "Alias", " Gano?", "   Apostado");
 
-        for (int i = 0; i <= jugadas.tope - 1; i++)
+        for (int i = 0; i <= apuestas.tope - 1; i++)
         {
 
-            struct apuesta jugada = jugadas.jugadas[i];
+            struct apuesta jugada = apuestas.jugadas[i];
 
             printf("%-10s",
                    jugada.alias);
@@ -431,6 +438,9 @@ void listadoTodasLasApuestas(struct apuestas jugadas)
                    jugada.valorApuesta);
         }
         printf("\n");
+    }
+    else{
+        printf("No existen jugadores registrados");
     }
 }
 void listadoDeApuestasPorJugador(struct jugadores jugadores, char alias[LIMITE_EN_ARRAYS], struct apuestas jugadas)
@@ -471,6 +481,9 @@ void listadoDeApuestasPorJugador(struct jugadores jugadores, char alias[LIMITE_E
                 }
             }
         }
+        else{
+            printf("El participante no tiene apuestas");
+        }
         printf("\n");
     }
 }
@@ -499,6 +512,9 @@ void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
             printf("Por favor ingrese el alias del jugador: ");
             scanf("%s", &alias);
             listadoDeApuestasPorJugador(participantes, alias, jugadas);
+            break;
+        case 4:
+            printf("Volviendo al menú principal.\n");
             break;
         default:
             printf("por favor ingrese datos validos");
@@ -601,10 +617,13 @@ void juego(struct jugadores &jugadores, char alias[LIMITE_EN_ARRAYS], struct apu
 {
     int indiceJugador = buscarAlias(jugadores, alias);
     if (indiceJugador == -1)
-        printf("El alias no existe");
+        printf("El alias no existe\n");
     else
     {
         struct jugador participante = jugadores.participantes[indiceJugador];
+        if (!participante.activo)
+        printf("El jugador no esta activo para jugar \n2");
+        else{
         const int MAX_MONTO = 1000;
         const int MIN_APUESTA = 50;
 
@@ -694,11 +713,11 @@ void juego(struct jugadores &jugadores, char alias[LIMITE_EN_ARRAYS], struct apu
 
                     struct apuesta jugada;
 
-                    copiarNombre(alias, jugada.alias, LIMITE_EN_ARRAYS);
+                    copiarNombre(alias, jugada.alias);
                     jugada.resultado = acierto;
                     jugada.valorApuesta = apuesta;
                     jugada.saldoResultante = participante.saldo;
-
+                    
                     jugadores.participantes[indiceJugador] = participante;
 
                     jugadas.jugadas[jugadas.tope] = jugada;
@@ -728,6 +747,7 @@ void juego(struct jugadores &jugadores, char alias[LIMITE_EN_ARRAYS], struct apu
 
             printf("Nos vemos a la proxima");
         }
+    }
     }
 }
 
