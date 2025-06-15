@@ -524,95 +524,6 @@ void menuConsultas(struct jugadores participantes, struct apuestas jugadas)
     } while (seleccion != 4);
 }
 
-void dataDePrueba(struct jugadores &todosJugadores, struct apuestas &todasApuestas)
-{
-
-    jugador j1;
-    j1.cedula = 12345689;
-    strcpy(j1.nombre, "Carlos");
-    strcpy(j1.apellido, "Perez");
-    strcpy(j1.alias, "Parleto");
-    j1.saldo = 600;
-    j1.activo = true;
-    j1.fechaNacimiento = {15, 6, 1990};
-
-    jugador j2;
-    j2.cedula = 98765421;
-    strcpy(j2.nombre, "Maria");
-    strcpy(j2.apellido, "Lopez");
-    strcpy(j2.alias, "Darita");
-    j2.saldo = 1000;
-    j2.activo = true;
-    j2.fechaNacimiento = {22, 12, 1985};
-
-    jugador j3;
-    j3.cedula = 55544433;
-    strcpy(j3.nombre, "Juan");
-    strcpy(j3.apellido, "Garcia");
-    strcpy(j3.alias, "Auanca");
-    j3.saldo = 800;
-    j3.activo = true;
-    j3.fechaNacimiento = {3, 9, 1995};
-
-    jugador j4;
-    j4.cedula = 63333333;
-    strcpy(j4.nombre, "Messi");
-    strcpy(j4.apellido, "Messi");
-    strcpy(j4.alias, "Bessi");
-    j4.saldo = 1000;
-    j4.activo = true;
-    j4.fechaNacimiento = {3, 9, 1995};
-
-    jugador j5;
-    j5.cedula = 63333333;
-    strcpy(j5.nombre, "Aenca");
-    strcpy(j5.apellido, "Aenca");
-    strcpy(j5.alias, "Aenca");
-    j5.saldo = 1000;
-    j5.activo = true;
-    j5.fechaNacimiento = {3, 9, 1995};
-
-    todosJugadores.participantes[0] = j1;
-    todosJugadores.participantes[1] = j2;
-    todosJugadores.participantes[2] = j3;
-    todosJugadores.participantes[3] = j4;
-    todosJugadores.participantes[4] = j5;
-    todosJugadores.tope = 5;
-
-    // Create apuestas2
-
-    apuesta a1;
-    a1.valorApuesta = 100;
-    a1.resultado = true;
-    a1.saldoResultante = 1100;
-    strcpy(a1.alias, "Carleto");
-
-    apuesta a2;
-    a2.valorApuesta = 50;
-    a2.resultado = false;
-    strcpy(a2.alias, "Marita");
-    a2.saldoResultante = 950;
-
-    apuesta a3;
-    a3.valorApuesta = 200;
-    a3.resultado = true;
-    strcpy(a3.alias, "Juanca");
-    a3.saldoResultante = 1000;
-
-    apuesta a4;
-    a4.valorApuesta = 500;
-    a4.resultado = false;
-    strcpy(a4.alias, "Carleto");
-    a4.saldoResultante = 600;
-
-    todasApuestas.jugadas[0] = a1;
-    todasApuestas.jugadas[1] = a2;
-    todasApuestas.jugadas[2] = a3;
-    todasApuestas.jugadas[3] = a4;
-
-    todasApuestas.tope = 4;
-}
-
 void juego(struct jugadores &jugadores, char alias[LIMITE_EN_ARRAYS], struct apuestas &jugadas)
 {
     int indiceJugador = buscarAlias(jugadores, alias);
@@ -756,8 +667,6 @@ int main()
 
     struct jugadores jugadores;
     struct apuestas apuestas;
-
-    dataDePrueba(jugadores, apuestas);
 
     int seleccion;
 
